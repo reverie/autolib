@@ -2,12 +2,17 @@ import imp, os, parser, tempfile
 
 AUTOLIB_SERVER = 'http://ianab.com/autolib-serv/'
 
-class ServerComm(object):
+class NoSuchLib(Exception):
+    pass
+
+class ServerStore(object):
     def get_src(self, name):
         # TODO: get from server
+        pass
 
     def set_src(self, name, src):
         # TODO: send to server
+        pass
 
     def list_modules(self):
         pass
@@ -16,24 +21,26 @@ class ServerComm(object):
         self.url = url
 
 class Autolib(object):
-    def _make_module(name, src):
+    def _make_module(self, name, src):
         fd, path = tempfile.mkstemp(suffix='.py')
-        f = os.fdopen(f, 'w')
+        f = os.fdopen(fd, 'w')
         f.write(src)
         f.close()
         return imp.load_source(name, path)
 
     def __getattr__(self, modname):
-        if modname in _module_cache:
-            return _module_cache[modname]
-        src = self._comm.get_src(name)
-        self._make_module(src)
-        _module_cache[modname] = mod
+        if modname in self._module_cache:
+            return self._module_cache[modname]
+        src = self._store.get_src(modname)
+        mod = self._make_module(modname, src)
+        self._module_cache[modname] = mod
         return mod
 
-    def __setattr__(self, name, mod):
+    def __setattr__(self, name, val):
         # TODO: validate name (starts with letter, lowercase_-digits)
-        path = mod.__file__
+        if name.startswith('_'):
+            return object.__setattr__(self, name, val)
+        path = val.__file__
         if not path.endswith('.py'):
             raise ValueError, 'Module must be a .py file'
         src = open(path).read()
@@ -41,14 +48,14 @@ class Autolib(object):
             parser.suite(src)
         except (TypeError, SyntaxError, parser.ParserError):
             raise ValueError, 'Module does not parse correctly.'
-        self._comm.set(name, src)
+        self._store.set_src(name, src)
 
     def List(self):
-        return _comm.list_modules()
+        return _store.list_modules()
 
-    def __init__(self, comm=ServerComm(AUTOLIB_SERVER)):
+    def __init__(self, store=ServerStore(AUTOLIB_SERVER)):
         self._module_cache = {}
-        self._comm = comm
+        self._store = store
 
 autolib = Autolib()
 
