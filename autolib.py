@@ -15,7 +15,6 @@ def get_url(url, data=None):
 
 class ServerStore(object):
     def get_src(self, name):
-        # TODO: get from server
         url = self.url + 'lib/' + name + '/'
         code, content = get_url(url)
         if code == 404:
@@ -26,7 +25,6 @@ class ServerStore(object):
             return content
 
     def set_src(self, name, src):
-        # TODO: send to server
         url = self.url + 'lib/' + name + '/'
         data = urlencode({'src': src})
         code, content = get_url(url, data)
@@ -62,7 +60,6 @@ class Autolib(object):
         return mod
 
     def __setattr__(self, name, val):
-        # TODO: validate name (starts with letter, lowercase_-digits)
         if name.startswith('_'):
             return object.__setattr__(self, name, val)
         if not re.match(lib_re, name):
