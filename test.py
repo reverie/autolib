@@ -42,7 +42,7 @@ print a.tester.foo()
 print a.tester.bar()
 print a.List()
 
-ss = ServerStore()
+ss = ServerStore(url='http://localhost:8000/autolib/')
 b = Autolib(store=ss)
 
 b.tester = mod
