@@ -7,9 +7,6 @@ AUTOLIB_SERVER = 'http://ianab.com/autolib/'
 
 lib_re = '[a-z][\w\-\.]*'
 
-class NoSuchLib(Exception):
-    pass
-
 class ServerStore(object):
     def get_src(self, name):
         # TODO: get from server
@@ -19,7 +16,7 @@ class ServerStore(object):
         code = int(resp['status'])
         if code == 404:
             raise AttributeError, 'Library not found.'
-        elif code == 500:
+        elif code != 200:
             raise Exception, 'The server could not handle your request.'
         else:
             return content
@@ -30,11 +27,11 @@ class ServerStore(object):
         h = Http()
         data = urlencode({'src': src})
         resp, content = h.request(url, 'POST', data)
-
         code = int(resp['status'])
-        if code == 500:
+        if code == 403:
+            raise ValueError, "Library with that name already exists."
+        elif code != 200:
             raise Exception, 'The server could not handle your request.'
-
 
     def list_modules(self):
         url = self.url + 'list/'
@@ -71,6 +68,8 @@ class Autolib(object):
         if not re.match(lib_re, name):
             raise ValueError, "Invalid library name."
         path = val.__file__
+        if path.endswith('.pyc'):
+            path = path[:-1]
         if not path.endswith('.py'):
             raise ValueError, 'Module must be a .py file'
         src = open(path).read()

@@ -1,13 +1,18 @@
-from autolib import Autolib, NoSuchLib, ServerStore, AUTOLIB_SERVER
+# You aren't really supposed to run this, I was just using it for development.
+# -ab
+
+from autolib import Autolib, ServerStore, AUTOLIB_SERVER
 import tempfile, os, imp
 
 class LocalStore(object):
     def get_src(self, name):
         if name not in self.dict:
-            raise NoSuchLib
+            raise AttributeError, "Library not found."
         return self.dict[name]
 
     def set_src(self, name, src):
+        if name in self.dict:
+            raise ValueError, "Library with that name already exists."
         self.dict[name] = src
 
     def list_modules(self):
@@ -50,3 +55,4 @@ b.tester = mod
 print b.tester.foo()
 print b.tester.bar()
 print b.List()
+
