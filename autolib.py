@@ -3,7 +3,7 @@ import imp, os, parser, tempfile, re, urllib
 from httplib2 import Http
 from urllib import urlencode
 
-AUTOLIB_SERVER = 'http://ianab.com/autolib-serv/'
+AUTOLIB_SERVER = 'http://ianab.com/autolib/'
 
 lib_re = '[a-z][\w\-\.]*'
 
@@ -45,7 +45,7 @@ class ServerStore(object):
             raise Exception, 'The server could not handle your request.'
         return content.split()
 
-    def __init__(self, url):
+    def __init__(self, url=AUTOLIB_SERVER):
         self.url = url
 
 class Autolib(object):
@@ -83,7 +83,7 @@ class Autolib(object):
     def List(self):
         return self._store.list_modules()
 
-    def __init__(self, store=ServerStore(AUTOLIB_SERVER)):
+    def __init__(self, store=ServerStore()):
         self._module_cache = {}
         self._store = store
 
