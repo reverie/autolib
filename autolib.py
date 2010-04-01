@@ -1,19 +1,23 @@
-import imp, os, parser, tempfile, re, urllib
+import imp, os, parser, tempfile, re, urllib2
 
-from httplib2 import Http
 from urllib import urlencode
 
 AUTOLIB_SERVER = 'http://ianab.com/autolib/'
 
 lib_re = '[a-z][\w\-\.]*'
 
+def get_url(url, data=None):
+    try:
+        result = urllib2.urlopen(url, data=data)
+    except urllib2.HTTPError, result:
+        pass
+    return result.code, result.read()
+
 class ServerStore(object):
     def get_src(self, name):
         # TODO: get from server
         url = self.url + 'lib/' + name + '/'
-        h = Http()
-        resp, content = h.request(url, 'GET')
-        code = int(resp['status'])
+        code, content = get_url(url)
         if code == 404:
             raise AttributeError, 'Library not found.'
         elif code != 200:
@@ -24,10 +28,8 @@ class ServerStore(object):
     def set_src(self, name, src):
         # TODO: send to server
         url = self.url + 'lib/' + name + '/'
-        h = Http()
         data = urlencode({'src': src})
-        resp, content = h.request(url, 'POST', data)
-        code = int(resp['status'])
+        code, content = get_url(url, data)
         if code == 403:
             raise ValueError, "Library with that name already exists."
         elif code != 200:
@@ -35,9 +37,7 @@ class ServerStore(object):
 
     def list_modules(self):
         url = self.url + 'list/'
-        h = Http()
-        resp, content = h.request(url, 'GET')
-        code = int(resp['status'])
+        code, content = get_url(url)
         if code == 500:
             raise Exception, 'The server could not handle your request.'
         return content.split()
