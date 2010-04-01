@@ -1,4 +1,4 @@
-from autolib import Autolib, NoSuchLib
+from autolib import Autolib, NoSuchLib, ServerStore
 import tempfile, os, imp
 
 class LocalStore(object):
@@ -38,6 +38,15 @@ mod = imp.load_source('testmod', path)
 
 a.tester = mod
 
-
 print a.tester.foo()
 print a.tester.bar()
+print a.List()
+
+ss = ServerStore('http://localhost:8000/autolib/')
+b = Autolib(store=ss)
+
+b.tester = mod
+
+print b.tester.foo()
+print b.tester.bar()
+print b.List()
