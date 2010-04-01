@@ -1,11 +1,22 @@
 What is autolib?
 The last Python library you'll need. 
 
-Oh my! How does that work?
-Indeed. ...
+How does that work?
+# Use an existing library:
+>>> from autolib import autolib
+>>> autolib.test.foo()
+3
+>>> autolib.test.bar()
+0.36787944117144233
+# Add your library to the global pool!
+>>> import my_helpers
+>>> autolib.andrews_helpers = my_helpers
+# Now anyone else can do this:
+>>> from autolib import autolib
+>>> autolib.andrews_helpers
 
 Is autolib safe to use?
 It turns out that the answer for most people will be "it depends", when all is said and done.
 
 Are patches welcome?
-Yes. In fact, as per the ideals of free/Libra/open source FLOSS, all pull requests received today after 7:32pm Pacific Time will be accepted.
+Yes. Please submit a pull request with your improvements via Github. After sunset in San Francisco, *all* pull requests will be accepted.
