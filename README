@@ -1,19 +1,22 @@
 What is autolib?
 The last Python library you'll need. 
 
-How does that work?
-# Use an existing library:
+But how???
+### Use an existing library:
 >>> from autolib import autolib
 >>> autolib.test.foo()
 3
 >>> autolib.test.bar()
 0.36787944117144233
-# Add your library to the global pool!
+### Add your library to the global pool!
 >>> import my_helpers
 >>> autolib.andrews_helpers = my_helpers
-# Now anyone else can do this:
+### Now anyone else can do this:
 >>> from autolib import autolib
 >>> autolib.andrews_helpers
+
+How do I install it?
+Download autolib.py and put it somewhere where Python will find it.
 
 Is autolib safe to use?
 It turns out that the answer for most people will be "it depends", when all is said and done.
